@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 //modulos
 import { CreateUserModule } from './Users/CreateUser';
 import { GetUserModule } from './Users/GetUser';
+import { CreateRoleModule } from './Roles/CreateRoles';
 
 @Module({
   imports:[
@@ -21,7 +22,8 @@ import { GetUserModule } from './Users/GetUser';
       plugins:[ApolloServerPluginLandingPageLocalDefault()],
     }),
     CreateUserModule,
-    GetUserModule
+    GetUserModule,
+    CreateRoleModule
 
   ],
 })

@@ -18,7 +18,7 @@ class RolesController < ApplicationController
     @role = Role.new(role_params)
 
     if @role.save
-      render json: @role, status: :created, location: @role
+      render json: @role, status: :created
     else
       render json: @role.errors, status: :unprocessable_entity
     end
@@ -46,6 +46,6 @@ class RolesController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def role_params
-      params.require(:role).permit(:id_rol, :nombre, :description)
+      params.require(:role).permit(:nombre, :description)
     end
 end

@@ -12,12 +12,19 @@ type User {
   password_digest: String!
 }
 
+type Role {
+  id_rol: Float!
+  nombre: String!
+  description: String!
+}
+
 type Query {
   getUser(id: Float!): User!
 }
 
 type Mutation {
   createUser(createUserDto: CreateUserDto!): User!
+  createRole(createRoleDto: CreateRoleDto!): Role!
 }
 
 input CreateUserDto {
@@ -27,4 +34,9 @@ input CreateUserDto {
   email: String!
   specialty: String!
   password_digest: String!
+}
+
+input CreateRoleDto {
+  nombre: String!
+  description: String!
 }
