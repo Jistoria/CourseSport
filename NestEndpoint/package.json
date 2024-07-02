@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@nestjs/graphql": "^12.1.1",
+    "@nestjs/mapped-types": "^2.0.5",
+    "@nestjs/typeorm": "^10.0.2",
+    "axios": "^1.7.2",
+    "class-validator": "^0.14.1",
+    "graphql": "^16.9.0",
+    "graphql-tools": "^9.0.1",
+    "typeorm": "^0.3.20"
+  }
+}

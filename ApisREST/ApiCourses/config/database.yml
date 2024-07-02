@@ -24,7 +24,7 @@ default: &default
 
 development:
   <<: *default
-  database: aplicaciones_web_II
+  database: course_db
 
   # The specified database role being used to connect to PostgreSQL.
   # To create additional roles in PostgreSQL see `$ createuser --help`.

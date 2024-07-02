@@ -1,0 +1,30 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type User {
+  cdl_user: Float!
+  nombre: String!
+  apellido: String!
+  genero: String!
+  email: String!
+  specialty: String!
+  password_digest: String!
+}
+
+type Query {
+  getUser(id: Float!): User!
+}
+
+type Mutation {
+  createUser(createUserDto: CreateUserDto!): User!
+}
+
+input CreateUserDto {
+  nombre: String!
+  apellido: String!
+  genero: String!
+  email: String!
+  specialty: String!
+  password_digest: String!
+}
