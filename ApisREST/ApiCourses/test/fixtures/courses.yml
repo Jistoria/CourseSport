@@ -1,0 +1,15 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  course_id: 
+  title_course: MyString
+  sport: one
+  cdl_coach: one
+  limit_students: 1
+
+two:
+  course_id: 
+  title_course: MyString
+  sport: two
+  cdl_coach: two
+  limit_students: 1

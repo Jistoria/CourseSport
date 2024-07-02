@@ -1,0 +1,23 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  cdl_user: 1
+  nombre: MyString
+  apellido: MyString
+  genero: MyString
+  email: MyString
+  specialty: MyString
+  password_digest: MyString
+  token: MyString
+  role: one
+
+two:
+  cdl_user: 1
+  nombre: MyString
+  apellido: MyString
+  genero: MyString
+  email: MyString
+  specialty: MyString
+  password_digest: MyString
+  token: MyString
+  role: two
