@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 import { CreateUserModule } from './Users/CreateUser';
 import { GetUserModule } from './Users/GetUser';
 import { CreateRoleModule } from './Roles/CreateRoles';
+import { RegisterStudentModule } from './Students/RegisterStudent';
 
 @Module({
   imports:[
@@ -23,8 +24,8 @@ import { CreateRoleModule } from './Roles/CreateRoles';
     }),
     CreateUserModule,
     GetUserModule,
-    CreateRoleModule
-
+    CreateRoleModule,
+    RegisterStudentModule
   ],
 })
 export class AppModule {}
