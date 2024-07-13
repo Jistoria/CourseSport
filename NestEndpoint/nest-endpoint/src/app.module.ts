@@ -5,13 +5,8 @@ import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin
 import { join } from 'path';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
-
-
-//modulos
-import { CreateUserModule } from './Users/CreateUser';
-import { GetUserModule } from './Users/GetUser';
-import { CreateRoleModule } from './Roles/CreateRoles';
-import { RegisterStudentModule } from './Students/RegisterStudent';
+import { AxiosConfigModule } from './Client/Axios-Config';
+import { FeaturesModule } from './feature.module';
 
 @Module({
   imports:[
@@ -22,10 +17,8 @@ import { RegisterStudentModule } from './Students/RegisterStudent';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       plugins:[ApolloServerPluginLandingPageLocalDefault()],
     }),
-    CreateUserModule,
-    GetUserModule,
-    CreateRoleModule,
-    RegisterStudentModule
+    FeaturesModule,
+    AxiosConfigModule
   ],
 })
 export class AppModule {}

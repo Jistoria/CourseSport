@@ -18,16 +18,6 @@ type Role {
   description: String!
 }
 
-type Student {
-  id: Float!
-  name: String!
-  lastname: String!
-  email: String!
-  age: Float!
-  password: String!
-  gender: String!
-}
-
 type Query {
   getUser(id: Float!): User!
 }
@@ -35,7 +25,6 @@ type Query {
 type Mutation {
   createUser(createUserDto: CreateUserDto!): User!
   createRole(createRoleDto: CreateRoleDto!): Role!
-  registerStudent(student: StudentInput!): Student!
 }
 
 input CreateUserDto {
@@ -50,14 +39,4 @@ input CreateUserDto {
 input CreateRoleDto {
   nombre: String!
   description: String!
-}
-
-input StudentInput {
-  cdl_user: Float!
-  name: String!
-  lastname: String!
-  email: String!
-  password: String!
-  gender: String!
-  conf_password: String!
 }

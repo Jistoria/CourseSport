@@ -1,84 +1,39 @@
-import { Controller, Post, Body, Injectable, Module } from '@nestjs/common';
-import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
-import { Repository, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
-import { IsNotEmpty, IsNumber, MaxLength } from 'class-validator';
+// login-student.module.ts
+import { Module, Injectable, Controller, Post, Body, Inject } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
-import { gender } from 'src/Enums/gender.enum';
-import axios from 'axios';
+import { IsNotEmpty, MaxLength } from 'class-validator';
+import { Student } from './student.entity';
+import { AxiosInstance } from 'axios';
 
 
-//Entidad
-@Entity()
-@ObjectType()
-class Student {
-
-    @PrimaryGeneratedColumn()
-    @Field()
-    id: number;
-
-    @Column()
-    @Field()
-    name: string;
-
-    
-    @Column()
-    @Field()
-    lastname: string;
-
-    @Column()
-    @Field()
-    email: string; 
-
-    @Column()
-    @Field()
-    age: number;
-
-    @Column()
-    @Field()
-    password: string;
-
-    @Field()
-    @Column({
-        type: 'enum',
-        enum: gender,
-        default: gender.Activo
-    })
-
-    @Field()
-    gender: gender;
-}
-
-//Input
-@InputType()
 class CredentialsInput {
-
-    @Field()
+    
     @IsNotEmpty()
     @MaxLength(10)
     cdl_user: number;
 
-    @Field()
     @IsNotEmpty()
     password: string;
 }
 
-
-//Servicio
 @Injectable()
 class LoginStudentService {
+    constructor(
+        @Inject('LARAVEL_API') private readonly laravelApi: AxiosInstance,
+    ) {}
+
     async execute(credentials: CredentialsInput): Promise<Student> {
-        try{
-            const response = await axios.post('http://127.0.0.1:8000/api/login', credentials);
+        try {
+            const response = await this.laravelApi.post('/login', credentials);
             return response.data;
-        }catch(e){
+        } catch (e) {
             console.log(e.response.data);
         }
-        
     }
 }
 
-@Controller('login_students')
+@Controller('login_student')
 class LoginStudentController {
     constructor(private loginStudentService: LoginStudentService) {}
 
@@ -88,19 +43,18 @@ class LoginStudentController {
     }
 }
 
-//Resolver
-@Resolver()
-class LoginStudentResolver {
-    constructor(private loginStudentService: LoginStudentService) {}
+// @Resolver()
+// class LoginStudentResolver {
+//     constructor(private loginStudentService: LoginStudentService) {}
 
-    @Mutation(() => Student)
-    async registerStudent(@Args('student') student: CredentialsInput) {
-        return this.loginStudentService.execute(student);
-    }
-}
+//     @Mutation(() => Student)
+//     async registerStudent(@Args('student') student: CredentialsInput) {
+//         return this.loginStudentService.execute(student);
+//     }
+// }
 
 @Module({
-    providers: [LoginStudentService, LoginStudentResolver],
-    controllers: [LoginStudentController]
+    providers: [LoginStudentService],
+    controllers: [LoginStudentController],
 })
-export class RegisterStudentModule {}
+export class LoginStudentModule {}

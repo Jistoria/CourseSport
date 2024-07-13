@@ -1,130 +1,85 @@
-import { Controller, Post, Body, Injectable, Module, HttpStatus } from '@nestjs/common';
-import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
-import { Repository, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
-import { IsNotEmpty, IsNumber, MaxLength } from 'class-validator';
+import { Module, Injectable, Controller, Post, Body, HttpStatus, Inject } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
-import { ObjectType, Field, InputType } from '@nestjs/graphql';
-import {CustomHttpException} from '../Client/HttpException.client';
+import { IsNotEmpty, MaxLength, IsNumber } from 'class-validator';
+import { CustomHttpException } from '../Client/HttpException.client';
+import { Student } from './student.entity';
 import { gender } from 'src/Enums/gender.enum';
-import axios from 'axios';
+import { AxiosInstance } from 'axios';
 
-
-//Entidad
-@Entity()
-@ObjectType()
-class Student {
-
-    @PrimaryGeneratedColumn()
-    @Field()
-    id: number;
-
-    @Column()
-    @Field()
-    name: string;
-
-    
-    @Column()
-    @Field()
-    lastname: string;
-
-    @Column()
-    @Field()
-    email: string; 
-
-    @Column()
-    @Field()
-    age: number;
-
-    @Column()
-    @Field()
-    password: string;
-
-    @Field()
-    @Column({
-        type: 'enum',
-        enum: gender,
-        default: gender.Activo
-    })
-
-    @Field()
-    gender: gender;
-}
-
-//Input
-@InputType()
 class StudentInput {
-
-    @Field()
     @IsNotEmpty()
     @MaxLength(10)
     cdl_user: number;
 
-    @Field()
+    
     @IsNotEmpty()
     name: string;
 
-    @Field()
     @IsNotEmpty()
     lastname: string;
 
-    @Field()
+    
     @IsNotEmpty()
     email: string;
 
+    
     @IsNumber()
     age: number;
 
-    @Field()
+    
     @IsNotEmpty()
     password: string;
 
-    @Field()
     @IsNotEmpty()
     gender: gender;
 
-    @Field()
+
     @IsNotEmpty()
     conf_password: string;
 }
 
-
-//Servicio
 @Injectable()
 export class RegisterStudentService {
+    constructor(
+        @Inject('LARAVEL_API') private readonly laravelApi: AxiosInstance,
+    ) {}
+
     async execute(student: StudentInput): Promise<Student> {
         try {
-            const response = await axios.post('http://127.0.0.1:8000/api/register', student);
+            const response = await this.laravelApi.post('/register', student);
             return response.data;
         } catch (e) {
-            throw new CustomHttpException(e.response?.data || 'An error occurred', e.response?.status || HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomHttpException(
+                e.response?.data || 'An error occurred',
+                e.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 }
 
-@Controller('register_students')
+@Controller('register_student')
 class RegisterStudentController {
     constructor(private registerStudentService: RegisterStudentService) {}
 
     @Post()
     async create(@Body() student: StudentInput): Promise<Student> {
-            return this.registerStudentService.execute(student);
-    }
-}
-
-//Resolver
-@Resolver()
-class RegisterStudentResolver {
-    constructor(private registerStudentService: RegisterStudentService) {}
-
-    @Mutation(() => Student)
-    async registerStudent(@Args('student') student: StudentInput) {
         return this.registerStudentService.execute(student);
     }
 }
 
+// @Resolver()
+// class RegisterStudentResolver {
+//     constructor(private registerStudentService: RegisterStudentService) {}
+
+//     @Mutation(() => Student)
+//     async registerStudent(@Args('student') student: StudentInput) {
+//         return this.registerStudentService.execute(student);
+//     }
+// }
+
 @Module({
-    providers: [RegisterStudentService, RegisterStudentResolver],
-    controllers: [RegisterStudentController]
+    providers: [RegisterStudentService],
+    controllers: [RegisterStudentController],
 })
 export class RegisterStudentModule {}
-        
