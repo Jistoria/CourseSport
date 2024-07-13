@@ -1,10 +1,14 @@
 // login-student.module.ts
-import { Module, Injectable, Controller, Post, Body, Inject } from '@nestjs/common';
+import { Module, Injectable, Controller, Post, Body, Inject, HttpStatus, UseGuards } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { IsNotEmpty, MaxLength } from 'class-validator';
 import { Student } from './student.entity';
 import { AxiosInstance } from 'axios';
+import { CustomHttpException } from '../Client/HttpException.client';
+import { GuestGuardLaravel } from 'src/Client/Guards/guest-laravel.guard';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { GuardModule } from '../Client/Guards/guards.module';
 
 
 class CredentialsInput {
@@ -21,14 +25,27 @@ class CredentialsInput {
 class LoginStudentService {
     constructor(
         @Inject('LARAVEL_API') private readonly laravelApi: AxiosInstance,
-    ) {}
+        private jwtService: JwtService,
+    ) {
+        console.log('LoginStudentService');
+        console.log(this.jwtService); // Verifica la configuración aquí
+    }
 
-    async execute(credentials: CredentialsInput): Promise<Student> {
+    async execute(credentials: CredentialsInput): Promise<{ user: Student, token: string, token_laravel:string }> {
         try {
             const response = await this.laravelApi.post('/login', credentials);
-            return response.data;
+            
+            const { data: userData, token } = response.data.user;
+            
+            // Genera un token JWT con la información del usuario
+            const jwtToken = this.jwtService.sign({ userId: userData.cdl_user }, );
+
+            return { user: userData, token: jwtToken, token_laravel: token};
         } catch (e) {
-            console.log(e.response.data);
+            throw new CustomHttpException(
+                e.response?.data || 'An error occurred',
+                e.response?.status || HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
     }
 }
@@ -38,23 +55,18 @@ class LoginStudentController {
     constructor(private loginStudentService: LoginStudentService) {}
 
     @Post()
-    async create(@Body() student: CredentialsInput): Promise<Student> {
+    @UseGuards(GuestGuardLaravel)
+    async create(@Body() student: CredentialsInput): Promise<{ user: Student, token: string, token_laravel:string }> {
         return this.loginStudentService.execute(student);
     }
 }
 
-// @Resolver()
-// class LoginStudentResolver {
-//     constructor(private loginStudentService: LoginStudentService) {}
-
-//     @Mutation(() => Student)
-//     async registerStudent(@Args('student') student: CredentialsInput) {
-//         return this.loginStudentService.execute(student);
-//     }
-// }
 
 @Module({
-    providers: [LoginStudentService],
+    imports: [
+        GuardModule
+    ],
+    providers: [LoginStudentService, GuestGuardLaravel],
     controllers: [LoginStudentController],
 })
 export class LoginStudentModule {}

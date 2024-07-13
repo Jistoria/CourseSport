@@ -4,9 +4,12 @@ import { GetUserModule } from './Users/GetUser';
 import { CreateRoleModule } from './Roles/CreateRoles';
 import { RegisterStudentModule } from './Students/RegisterStudent';
 import { LoginStudentModule } from './Students/LoginStudent';
+import { GuardModule } from './Client/Guards/guards.module';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
     imports: [
+        GuardModule,
         CreateUserModule,
         GetUserModule,
         CreateRoleModule,
@@ -20,5 +23,6 @@ import { LoginStudentModule } from './Students/LoginStudent';
         RegisterStudentModule,
         LoginStudentModule,
     ],
+    
 })
 export class FeaturesModule {}

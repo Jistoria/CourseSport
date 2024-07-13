@@ -7,6 +7,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { AxiosConfigModule } from './Client/Axios-Config';
 import { FeaturesModule } from './feature.module';
+import { GuardModule } from './Client/Guards/guards.module';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 
 @Module({
   imports:[
@@ -17,8 +19,10 @@ import { FeaturesModule } from './feature.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       plugins:[ApolloServerPluginLandingPageLocalDefault()],
     }),
+    GuardModule,
     FeaturesModule,
-    AxiosConfigModule
+    AxiosConfigModule,
   ],
+  
 })
 export class AppModule {}
