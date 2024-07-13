@@ -1,9 +1,10 @@
-import { Controller, Post, Body, Injectable, Module } from '@nestjs/common';
+import { Controller, Post, Body, Injectable, Module, HttpStatus } from '@nestjs/common';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 import { IsNotEmpty, IsNumber, MaxLength } from 'class-validator';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
+import {CustomHttpException} from '../Client/HttpException.client';
 import { gender } from 'src/Enums/gender.enum';
 import axios from 'axios';
 
@@ -89,15 +90,14 @@ class StudentInput {
 
 //Servicio
 @Injectable()
-class RegisterStudentService {
+export class RegisterStudentService {
     async execute(student: StudentInput): Promise<Student> {
-        try{
+        try {
             const response = await axios.post('http://127.0.0.1:8000/api/register', student);
             return response.data;
-        }catch(e){
-            console.log(e.response.data);
+        } catch (e) {
+            throw new CustomHttpException(e.response?.data || 'An error occurred', e.response?.status || HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
     }
 }
 
