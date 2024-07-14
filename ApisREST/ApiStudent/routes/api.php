@@ -24,7 +24,7 @@ Route::middleware(['guest:sanctum'])->group(function () {
 
 //Rutas que necesitan tener sesion
 Route::middleware(['auth:sanctum'])->group(function(){
-    Route::get('/get_session',[UserController::class,'get_session']);
+    Route::get('/get-session',[UserController::class,'get_session']);
     Route::post('/logout',[UserController::class,'logout']);
 });
 //Rutas que necesitan tener sesion y un rol Administrador

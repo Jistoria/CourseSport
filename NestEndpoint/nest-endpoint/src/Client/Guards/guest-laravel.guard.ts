@@ -9,8 +9,6 @@ export class GuestGuardLaravel implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const token = request.headers.authorization?.split(' ')[1];
 
-        console.log('GuestGuardLaravel');
-        console.log(token);
         if (token) {
             try {
                 // Verifica el token, si es válido significa que el usuario ya está autenticado
@@ -21,8 +19,6 @@ export class GuestGuardLaravel implements CanActivate {
                 if (e.name !== 'UnauthorizedException') {
                     return true;
                 }
-                console.log('GuestGuardLaravel error');
-                console.log(e);
                 throw e;
             }
         }

@@ -34,7 +34,6 @@ export class Student {
     @Column({
         type: 'enum',
         enum: gender,
-        default: gender.Activo,
     })
     @Field()
     gender: gender;
