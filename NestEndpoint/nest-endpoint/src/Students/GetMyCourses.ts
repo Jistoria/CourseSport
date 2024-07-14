@@ -23,7 +23,7 @@ class GetMyCoursesService {
             const response = await this.laravelApi.get('/my_courses', {
                 headers: { Authorization: `Bearer ${token.token_laravel ?? ''}` },
             });
-            return response.data;
+            return response.data.courses;
         } catch (e) {
             throw new CustomHttpException(
                 e.response?.data || 'An error occurred',

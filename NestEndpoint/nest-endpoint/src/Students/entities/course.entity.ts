@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { ObjectType, Field } from '@nestjs/graphql';
-import { gender } from 'src/Enums/gender.enum';
+
 
 @Entity()
 @ObjectType()

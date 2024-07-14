@@ -18,8 +18,19 @@ type Role {
   description: String!
 }
 
+type Course {
+  course_id: Float!
+  title_course: String!
+  description: String!
+  sport_id: Float!
+  cdl_coach: Float!
+  quota: Float!
+}
+
 type Query {
   getUser(id: Float!): User!
+  getCourses(token_laravel: String!): [Course!]!
+  getMyCourses(token_laravel: String!): [Course!]!
 }
 
 type Mutation {

@@ -1,6 +1,6 @@
 import { Module, Injectable, Controller, Post, Body, Inject, HttpStatus, UseGuards, Get } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql';
 import { IsNotEmpty, MaxLength } from 'class-validator';
 import { AxiosInstance } from 'axios';
 import { CustomHttpException } from '../Client/HttpException.client';
@@ -19,14 +19,14 @@ class GetCoursesService {
         @Inject('LARAVEL_API') private readonly laravelApi: AxiosInstance,
     ) {}
 
-    async execute(token: tokenInput): Promise<Course> {
+    async execute(token: tokenInput): Promise<Course[]> {
         try {
             const response = await this.laravelApi.get('/dashboard_student/courses',{
                 headers: {
                     Authorization: `Bearer ${token.token_laravel}`,
                 },
             } );
-            return response.data;
+            return response.data.courses;
         } catch (e) {
             throw new CustomHttpException(
                 e.response?.data || 'An error occurred',
@@ -42,14 +42,22 @@ class GetCoursesController {
 
     @Get()
     @UseGuards(AuthGuardLaravel)
-    async create(@Body() token: tokenInput): Promise<Course> {
+    async create(@Body() token: tokenInput): Promise<Course[]> {
         return this.getCoursesService.execute(token);
     }
 }
+@Resolver(() => Course)
+export class GetCoursesResolver {
+    constructor(private getCoursesService: GetCoursesService) {}
 
+    @Query(() => [Course])
+    async getCourses(@Args('token_laravel') token_laravel: string): Promise<Course[]> {
+        return this.getCoursesService.execute({ token_laravel });
+    }
+}
 @Module({
     imports: [GuardModule],
-    providers: [GetCoursesService],
+    providers: [GetCoursesService, GetCoursesResolver],
     controllers: [ GetCoursesController],
 })
 export class GetCoursesModule{}
