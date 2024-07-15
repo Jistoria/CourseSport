@@ -22,7 +22,9 @@ import {RouterLink} from 'vue-router'
               <a class="nav-link active" aria-current="page" href="#">Deportes</a>
             </li>
             <li class="nav-item">
+              <router-link :to="{name: 'login'}">
               <a class="nav-link active" aria-current="page" href="#">Iniciar Sesion</a>
+              </router-link>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="#">Registro</a>
