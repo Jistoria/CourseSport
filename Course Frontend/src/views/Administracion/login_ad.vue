@@ -1,13 +1,10 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
 
 </script>
 
 <template>
-
-
-
-  <RouterView />
+<h1>soy login ad</h1>
+    
 </template>
 <style scoped>
 
