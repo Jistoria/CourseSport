@@ -1,9 +1,7 @@
 import { Module, Injectable, Controller, Post, Body, HttpStatus, Inject } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { IsNotEmpty, MaxLength, IsNumber } from 'class-validator';
 import { CustomHttpException } from '../Client/HttpException.client';
-import { Student } from './student.entity';
+import { Student } from './entities/student.entity';
 import { gender } from 'src/Enums/gender.enum';
 import { AxiosInstance } from 'axios';
 
@@ -37,6 +35,8 @@ class StudentInput {
 
     @IsNotEmpty()
     conf_password: string;
+
+    token_laravel: string;
 }
 
 @Injectable()
@@ -47,7 +47,9 @@ export class RegisterStudentService {
 
     async execute(student: StudentInput): Promise<Student> {
         try {
-            const response = await this.laravelApi.post('/register', student);
+            const response = await this.laravelApi.post('/register', student,
+                { headers: { Authorization: `Bearer ${student.token_laravel ?? ''}` } }
+            );
             return response.data;
         } catch (e) {
             throw new CustomHttpException(

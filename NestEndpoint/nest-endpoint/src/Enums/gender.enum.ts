@@ -1,7 +1,6 @@
 
 
     export enum gender {
-        Activo = 'Activo',
-        Inactivo = 'Inactivo',
-        Eliminado = 'Eliminado',
+        Masculino = 'M',
+        Femenino = 'F',
     }

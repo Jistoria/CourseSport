@@ -11,6 +11,10 @@ import axios from 'axios';
             useFactory: () => {
                 return axios.create({
                     baseURL: process.env.URL_BASE_LARAVEL,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        withCredentials: true,
+                    },
                 });
             },
         },

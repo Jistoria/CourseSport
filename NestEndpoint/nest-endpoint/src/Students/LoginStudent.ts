@@ -1,14 +1,13 @@
 // login-student.module.ts
 import { Module, Injectable, Controller, Post, Body, Inject, HttpStatus, UseGuards } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { IsNotEmpty, MaxLength } from 'class-validator';
-import { Student } from './student.entity';
+import { Student } from './entities/student.entity';
 import { AxiosInstance } from 'axios';
 import { CustomHttpException } from '../Client/HttpException.client';
 import { GuestGuardLaravel } from 'src/Client/Guards/guest-laravel.guard';
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtService } from '@nestjs/jwt';
 import { GuardModule } from '../Client/Guards/guards.module';
+
 
 
 class CredentialsInput {
@@ -19,6 +18,8 @@ class CredentialsInput {
 
     @IsNotEmpty()
     password: string;
+    
+    token_laravel: string;
 }
 
 @Injectable()
@@ -26,14 +27,13 @@ class LoginStudentService {
     constructor(
         @Inject('LARAVEL_API') private readonly laravelApi: AxiosInstance,
         private jwtService: JwtService,
-    ) {
-        console.log('LoginStudentService');
-        console.log(this.jwtService); // Verifica la configuración aquí
-    }
+    ) {}
 
     async execute(credentials: CredentialsInput): Promise<{ user: Student, token: string, token_laravel:string }> {
         try {
-            const response = await this.laravelApi.post('/login', credentials);
+            const response = await this.laravelApi.post('/login', credentials,
+                { headers: { Authorization: `Bearer ${credentials.token_laravel ?? ''}` } }
+            );
             
             const { data: userData, token } = response.data.user;
             
