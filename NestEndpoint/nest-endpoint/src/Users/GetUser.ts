@@ -1,15 +1,22 @@
-import { Injectable, Module, Controller, Get, Param } from '@nestjs/common';
+import { Injectable, Module, Controller, Get, Param,Inject, UseGuards } from '@nestjs/common';
 import { Args, Query, Resolver } from '@nestjs/graphql';
 import { User } from './CreateUser';
-import axios from 'axios';
+import { AxiosInstance } from 'axios';
+import { GuardModule } from '../Client/Guards/guards.module';
+import { JwtAuthGuard } from '../Client/Guard Ruby/jwt-auth.guard';
 
 // Servicio GetUserService
 @Injectable()
 class GetUserService {
-    async findOne(id: number): Promise<User> {
-        const response = await axios.get(`http://127.0.0.1:3000/users/${id}`);
-        return response.data;
+    constructor(
+        @Inject('RUBY_API') private readonly rubyApi:AxiosInstance,
+    ){}
+    async findOne(id: number): Promise<User>{
+        const response = await this.rubyApi.get(`/users/${id}`)
+        return response.data
     }
+
+    
 }
 
 // Controlador GetUserController
@@ -29,6 +36,7 @@ class GetUserResolver {
     constructor(private readonly getUserService: GetUserService) {}
 
     @Query(() => User)
+    //@UseGuards(JwtAuthGuard)
     async getUser(@Args('id') id: number): Promise<User> {
         return await this.getUserService.findOne(id);
     }

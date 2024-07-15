@@ -1,10 +1,13 @@
-import { Controller, Post, Body, Injectable, Module } from '@nestjs/common';
+import { Controller, Post, Body, Injectable, Module, Inject, UseGuards } from '@nestjs/common';
 import { InjectRepository, TypeOrmModule } from '@nestjs/typeorm';
 import { Repository, Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
 import { IsNotEmpty, MaxLength } from 'class-validator';
 import { Args, Mutation, Resolver } from '@nestjs/graphql';
 import { ObjectType, Field, InputType } from '@nestjs/graphql';
-import axios from 'axios'
+import { AxiosInstance } from 'axios';
+import { GuardModule } from '../Client/Guards/guards.module';
+//guardias
+import { JwtAuthGuard } from '../Client/Guard Ruby/jwt-auth.guard';
 
 //Entidad
 @Entity('Users')
@@ -76,10 +79,17 @@ class CreateUserDto{
 //Servicio
 @Injectable()
 class CreateUserService{
+
+    constructor(
+        @Inject('RUBY_API')
+        private readonly rubyApi: AxiosInstance
+    ){}
+
     async execute(createUserDto: CreateUserDto): Promise<User>{
-        const response = await axios.post('http://127.0.0.1:3000/users', createUserDto);
-        return response.data;
+        const response = await this.rubyApi.post('/users', createUserDto)
+        return response.data
     }
+    
 }
 
 //Controlador
@@ -88,6 +98,7 @@ class CreateUserController{
     constructor(private readonly createUserService: CreateUserService){}
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     async create(@Body() createUserDto: CreateUserDto): Promise<User>{
         return this.createUserService.execute(createUserDto);
     }
@@ -104,6 +115,9 @@ class CreateUserResolver {
 }
 
 @Module({
+    imports:[
+        GuardModule
+    ],
     providers: [CreateUserService, CreateUserResolver],
     controllers: [CreateUserController],
 })
